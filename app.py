@@ -18,9 +18,9 @@ st.set_page_config(
 
 BASE_DIR = os.getcwd()
 
-diabetes_model = joblib.load(os.path.join(BASE_DIR, 'notebooks', 'diabetes_final.pkl'))
-heart_disease_model = joblib.load(os.path.join(BASE_DIR, 'notebooks', 'heart_final.pkl'))
-kidney_disease_model = joblib.load(os.path.join(BASE_DIR, 'notebooks', 'kindey_final.pkl'))
+diabetes_model = joblib.load(os.path.join(BASE_DIR,'diabetes_final.pkl'))
+heart_disease_model = joblib.load(os.path.join(BASE_DIR,'heart_final.pkl'))
+kidney_disease_model = joblib.load(os.path.join(BASE_DIR,'kindey_final.pkl'))
 
 # ----------------- Recommendation functions -----------------
 def diabetes_recommendations(data, prediction):
@@ -724,4 +724,5 @@ else:  # "Kidney Disease Prediction"
             data=pdf_bytes,
             file_name=f"kidney_report_{patient_name}.pdf",
             mime="application/pdf",
+
         )
