@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Heart Disease AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#ff4d4d",
+          "background-dark": "#0B1220",
+          "navy-dark": "#0E1628",
+          "card-dark": "#1C2333",
+        },
+        fontFamily: { "display": ["Inter", "sans-serif"] },
+      },
+    },
+  }
+</script>
+<style>
+  body { background: linear-gradient(135deg,#0B1220 0%,#0E1628 100%); min-height:100vh; }
+  .glass-container { background:rgba(28,35,51,0.6); backdrop-filter:blur(12px); border:1px solid rgba(255,77,77,0.1); }
+  .custom-input:focus { box-shadow:0 0 0 2px rgba(255,77,77,0.3); border-color:#ff4d4d; }
+  .spinner { border:3px solid rgba(255,77,77,0.2); border-top-color:#ff4d4d; border-radius:50%; width:22px; height:22px; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .result-appear { animation:fadeUp 0.5s ease forwards; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+</style>
+</head>
+<body class="font-display text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+
+  <!-- Header -->
+  <header class="w-full border-b border-white/10 px-6 py-4 flex items-center justify-between bg-navy-dark/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center bg-primary/20 p-2 rounded-lg">
+        <span class="material-symbols-outlined text-primary text-2xl">monitor_heart</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight">CardioScan <span class="text-primary">AI</span></h1>
+    </div>
+    <nav class="hidden md:flex items-center gap-1">
+      <a class="px-4 py-2 rounded-lg text-slate-400 hover:text-white text-sm font-medium" href="kidney.html">Kidney Disease</a>
+      <div class="relative px-4 py-2">
+        <a class="text-white text-sm font-semibold" href="heart.html">Heart Disease</a>
+        <div class="absolute bottom-[-17px] left-0 w-full h-[3px] bg-primary rounded-t-full"></div>
+      </div>
+      <a class="px-4 py-2 rounded-lg text-slate-400 hover:text-white text-sm font-medium" href="diabetes.html">Diabetes</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto w-full p-6 lg:p-10">
+    <div class="mb-8">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="material-symbols-outlined text-primary text-sm">emergency</span>
+        <span class="text-primary text-sm font-bold tracking-widest uppercase">Diagnostic Module</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-black text-white leading-tight">
+        Heart Disease Prediction<br/>
+        <span class="text-primary/90">Using Machine Learning</span>
+      </h2>
+      <p class="text-slate-400 mt-4 max-w-2xl leading-relaxed">
+        Enter clinical parameters below for immediate AI-driven cardiovascular health assessment.
+      </p>
+    </div>
+
+    <div class="glass-container rounded-xl p-8 shadow-2xl">
+      <div class="flex items-center gap-3 mb-8 pb-4 border-b border-white/5">
+        <span class="material-symbols-outlined text-primary">clinical_notes</span>
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider">Patient Clinical Data Entry</h3>
+      </div>
+
+      <div class="space-y-8">
+        <!-- Row 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Age</label>
+            <input id="age" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" placeholder="Enter age" type="number" value="0"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Sex</label>
+            <select id="sex" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white focus:ring-primary">
+              <option value="1">Male</option>
+              <option value="0">Female</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Chest Pain Types (0-3)</label>
+            <input id="cp" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" max="3" min="0" placeholder="0 to 3" type="number" value="0"/>
+          </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Resting Blood Pressure (mm Hg)</label>
+            <input id="trestbps" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" placeholder="e.g. 120" type="number" value="0"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Serum Cholesterol (mg/dl)</label>
+            <input id="chol" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" placeholder="e.g. 200" type="number" value="0"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Fasting Blood Sugar &gt; 120 (0/1)</label>
+            <select id="fbs" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white focus:ring-primary">
+              <option value="0">No (False)</option>
+              <option value="1">Yes (True)</option>
+            </select>
+          </div>
+        </div>
+        <!-- Row 3 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Resting Electrocardiographic</label>
+            <select id="restecg" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white focus:ring-primary">
+              <option value="0">Normal</option>
+              <option value="1">ST-T wave abnormality</option>
+              <option value="2">Left ventricular hypertrophy</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Max Heart Rate Achieved</label>
+            <input id="thalach" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" placeholder="e.g. 150" type="number" value="0"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Exercise Induced Angina</label>
+            <select id="exang" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white focus:ring-primary">
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+        </div>
+        <!-- Row 4 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">ST Depression (Exercise)</label>
+            <input id="oldpeak" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" placeholder="e.g. 2.3" step="0.1" type="number" value="0"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">ST Segment Slope (0-2)</label>
+            <input id="slope" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" max="2" min="0" type="number" value="0"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Major Vessels (0-3)</label>
+            <input id="ca" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white placeholder:text-slate-600 focus:ring-primary" max="3" min="0" type="number" value="0"/>
+          </div>
+        </div>
+        <!-- Row 5 -->
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-300 ml-1">Thal Result</label>
+            <select id="thal" class="custom-input w-full bg-card-dark border-transparent rounded-lg p-4 text-white focus:ring-primary">
+              <option value="0">Normal (0)</option>
+              <option value="1">Fixed Defect (1)</option>
+              <option value="2">Reversible Defect (2)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-6">
+          <button id="submitBtn" onclick="predictHeart()"
+            class="w-full group relative flex items-center justify-center p-0.5 rounded-lg font-bold transition-all hover:scale-[1.01] active:scale-[0.99]">
+            <div class="absolute inset-0 bg-primary rounded-lg blur opacity-40 group-hover:opacity-60"></div>
+            <div id="btnContent" class="relative w-full bg-navy-dark border-2 border-primary rounded-lg py-4 flex items-center justify-center gap-3">
+              <span class="material-symbols-outlined text-primary">analytics</span>
+              <span class="text-white text-lg">Heart Disease Test Result</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="resultSection" class="mt-12 pt-10 border-t border-white/5 hidden result-appear">
+        <div id="resultCard" class="flex flex-col md:flex-row items-center gap-8 rounded-2xl p-8 border"></div>
+        <div class="mt-6 glass-container rounded-xl p-6">
+          <h4 class="flex items-center gap-2 mb-4 font-bold text-white">
+            <span class="material-symbols-outlined text-primary">description</span> Full Report
+          </h4>
+          <pre id="reportText" class="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed font-mono bg-card-dark rounded-lg p-4"></pre>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="errorBox" class="mt-6 hidden glass-container rounded-xl border-l-4 border-l-red-500 p-5 text-red-400 text-sm"></div>
+
+    </div>
+
+    <footer class="mt-12 text-center text-slate-500 text-sm pb-10">
+      <p>© 2024 CardioScan AI Technologies. For clinical assistance only.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+const API_BASE = "https://models-ml-fastapi-3.onrender.com";
+
+function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+async function predictHeart() {
+  const btn = document.getElementById("submitBtn");
+  const btnContent = document.getElementById("btnContent");
+  const resultSection = document.getElementById("resultSection");
+  const errorBox = document.getElementById("errorBox");
+
+  const payload = {
+    age: getVal("age"), sex: getVal("sex"), cp: getVal("cp"),
+    trestbps: getVal("trestbps"), chol: getVal("chol"), fbs: getVal("fbs"),
+    restecg: getVal("restecg"), thalach: getVal("thalach"), exang: getVal("exang"),
+    oldpeak: getVal("oldpeak"), slope: getVal("slope"), ca: getVal("ca"),
+    thal: getVal("thal"),
+  };
+
+  btnContent.innerHTML = `<div class="spinner mx-auto"></div>`;
+  btn.disabled = true;
+  resultSection.classList.add("hidden");
+  errorBox.classList.add("hidden");
+
+  try {
+    const res = await fetch(`${API_BASE}/predict/heart`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    const probMatch = data.report.match(/([\d.]+)%/);
+    const prob = probMatch ? parseFloat(probMatch[1]) : 0;
+    const isPositive = data.prediction === 1;
+
+    const strokeOffset = 364 - (364 * prob / 100);
+    const circleColor = isPositive ? "#ff4d4d" : "#4ade80";
+    const badge = isPositive
+      ? `<span class="px-4 py-1 bg-primary text-white text-xs font-black uppercase rounded-full">⚠ At Risk</span>`
+      : `<span class="px-4 py-1 bg-green-500/20 text-green-400 text-xs font-black uppercase rounded-full">✓ Healthy</span>`;
+
+    document.getElementById("resultCard").className =
+      `flex flex-col md:flex-row items-center gap-8 rounded-2xl p-8 border ${isPositive ? "bg-primary/5 border-primary/20" : "bg-green-500/5 border-green-500/20"}`;
+
+    document.getElementById("resultCard").innerHTML = `
+      <div class="flex flex-col items-center justify-center min-w-[160px]">
+        <div class="relative w-32 h-32 flex items-center justify-center">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle class="text-white/5" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+            <circle cx="64" cy="64" fill="transparent" r="58" stroke="${circleColor}" stroke-dasharray="364" stroke-dashoffset="${strokeOffset}" stroke-width="8" stroke-linecap="round"></circle>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-3xl font-black text-white">${prob.toFixed(0)}%</span>
+            <span class="text-[10px] text-slate-400 uppercase font-bold">Confidence</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 space-y-4 text-center md:text-left">
+        <div class="flex flex-col md:flex-row items-center gap-4">
+          <h4 class="text-2xl font-bold text-white">${isPositive ? "Heart Disease Detected" : "No Heart Disease"}</h4>
+          ${badge}
+        </div>
+        <p class="text-slate-400 leading-relaxed">Based on the clinical parameters provided.</p>
+        <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10">
+            <span class="w-2 h-2 rounded-full ${isPositive ? "bg-primary animate-pulse" : "bg-green-400"}"></span>
+            <span class="text-xs font-medium text-slate-300">${isPositive ? "Priority High" : "Priority Low"}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("reportText").textContent = data.report.trim();
+    resultSection.classList.remove("hidden");
+    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  } catch (err) {
+    errorBox.textContent = `❌ Error: ${err.message}. The server might be waking up — try again in 30 seconds.`;
+    errorBox.classList.remove("hidden");
+  } finally {
+    btnContent.innerHTML = `<span class="material-symbols-outlined text-primary">analytics</span><span class="text-white text-lg">Heart Disease Test Result</span>`;
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

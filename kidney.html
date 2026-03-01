@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kidney Disease AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#00c795",
+          "background-dark": "#0b1220",
+          "card-dark": "#1c2333",
+          "accent-dark": "#0e1628",
+        },
+        fontFamily: { "display": ["Inter", "sans-serif"] },
+      },
+    },
+  }
+</script>
+<style>
+  .glass-panel { background:rgba(28,35,51,0.7); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.1); }
+  .glow-text { text-shadow:0 0 20px rgba(0,199,149,0.4); }
+  .spinner { border:3px solid rgba(0,199,149,0.2); border-top-color:#00c795; border-radius:50%; width:22px; height:22px; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .result-appear { animation:fadeUp 0.5s ease forwards; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+</style>
+</head>
+<body class="bg-background-dark font-display text-slate-100 min-h-screen">
+<div class="relative min-h-screen w-full flex flex-col items-center bg-gradient-to-b from-[#0B1220] to-[#0E1628] p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="w-full max-w-[1400px] flex items-center justify-between mb-8 px-6 py-4 glass-panel rounded-xl">
+    <div class="flex items-center gap-3">
+      <div class="bg-primary p-2 rounded-lg text-background-dark">
+        <span class="material-symbols-outlined block text-2xl font-bold">nephrology</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight">Medical AI <span class="text-primary">Dashboard</span></h1>
+    </div>
+    <nav class="hidden md:flex items-center gap-1">
+      <a class="px-5 py-2 text-sm font-semibold text-primary border-b-2 border-primary" href="kidney.html">Kidney Disease</a>
+      <a class="px-5 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent" href="heart.html">Heart Disease</a>
+      <a class="px-5 py-2 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent" href="diabetes.html">Diabetes</a>
+    </nav>
+  </header>
+
+  <!-- Main -->
+  <main class="w-full max-w-[1400px] glass-panel rounded-xl p-8 shadow-2xl">
+    <div class="mb-10">
+      <h2 class="text-3xl md:text-4xl font-black text-slate-100 glow-text mb-2">Kidney Disease Prediction</h2>
+      <p class="text-slate-400 max-w-2xl">Utilizing advanced machine learning to analyze renal clinical data and assess patient health risks.</p>
+    </div>
+
+    <div class="space-y-8">
+      <!-- Row 1 -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Age</label>
+          <input id="age" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="Years" type="number" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Blood Pressure</label>
+          <input id="blood_pressure" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="mm/Hg" type="number" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Specific Gravity</label>
+          <input id="specific_gravity" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="1.005 - 1.025" type="number" step="0.001" value="1.02"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Albumin</label>
+          <select id="albumin" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">0 (Normal)</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sugar</label>
+          <select id="sugar" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">0 (Normal)</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3+</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Red Blood Cell</label>
+          <select id="red_blood_cells" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">Normal</option>
+            <option value="1">Abnormal</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Pus Cell</label>
+          <select id="pus_cell" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">Normal</option>
+            <option value="1">Abnormal</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Pus Cell Clumps</label>
+          <select id="pus_cell_clumps" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">Not Present</option>
+            <option value="1">Present</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Bacteria</label>
+          <select id="bacteria" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">Not Present</option>
+            <option value="1">Present</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Blood Glucose Rand.</label>
+          <input id="blood_glucose_random" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="mgs/dl" type="number" value="0"/>
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Blood Urea</label>
+          <input id="blood_urea" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="mgs/dl" type="number" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Serum Creatinine</label>
+          <input id="serum_creatinine" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="mgs/dl" type="number" step="0.1" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sodium</label>
+          <input id="sodium" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="mEq/L" type="number" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Potassium</label>
+          <input id="potassium" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="mEq/L" type="number" step="0.1" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Haemoglobin</label>
+          <input id="haemoglobin" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="gms" type="number" step="0.1" value="0"/>
+        </div>
+      </div>
+
+      <!-- Row 4 -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Packed Cell Vol.</label>
+          <input id="packed_cell_volume" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="%" type="number" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">WBC Count</label>
+          <input id="white_blood_cell_count" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="cells/cmm" type="number" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">RBC Count</label>
+          <input id="red_blood_cell_count" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50" placeholder="millions/cmm" type="number" step="0.1" value="0"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Hypertension</label>
+          <select id="hypertension" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Diabetes Mellitus</label>
+          <select id="diabetes_mellitus" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 5 -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pb-8">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Coronary Artery Dis.</label>
+          <select id="coronary_artery_disease" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Appetite</label>
+          <select id="appetite" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">Good</option>
+            <option value="1">Poor</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Peda Edema</label>
+          <select id="peda_edema" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Anemia</label>
+          <select id="aanemia" class="w-full bg-card-dark border-none rounded-lg p-4 text-slate-100 focus:ring-2 focus:ring-primary/50">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex justify-center py-6">
+        <button id="submitBtn" onclick="predictKidney()"
+          class="group relative flex items-center gap-3 px-12 py-4 bg-primary/10 border-2 border-primary rounded-xl text-primary font-bold text-lg hover:bg-primary hover:text-background-dark transition-all duration-300 shadow-[0_0_20px_rgba(0,199,149,0.2)]">
+          <span id="btnContent" class="flex items-center gap-3">
+            <span class="material-symbols-outlined">analytics</span>
+            Kidney's Test Result
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="resultSection" class="mt-12 pt-12 border-t border-slate-700/50 hidden result-appear">
+      <div id="resultCard" class="rounded-2xl p-8 border flex flex-col md:flex-row items-center justify-between gap-8"></div>
+      <div class="mt-6 glass-panel rounded-xl p-6">
+        <h4 class="flex items-center gap-2 mb-4 font-bold text-white">
+          <span class="material-symbols-outlined text-primary">description</span> Full Report
+        </h4>
+        <pre id="reportText" class="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed font-mono bg-card-dark rounded-lg p-4"></pre>
+      </div>
+      <!-- Info Cards -->
+      <div id="infoCards" class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+    </div>
+
+    <!-- Error -->
+    <div id="errorBox" class="mt-6 hidden glass-panel rounded-xl border-l-4 border-l-red-500 p-5 text-red-400 text-sm"></div>
+  </main>
+
+  <footer class="w-full max-w-[1400px] mt-8 mb-4 px-6 text-slate-500 text-sm flex justify-between items-center">
+    <p>© 2024 NephroGuard AI Systems. Professional Medical Use Only.</p>
+    <div class="flex gap-4">
+      <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+      <a class="hover:text-primary transition-colors" href="#">Support</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+const API_BASE = "https://models-ml-fastapi-3.onrender.com";
+function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+async function predictKidney() {
+  const btn = document.getElementById("submitBtn");
+  const btnContent = document.getElementById("btnContent");
+  const resultSection = document.getElementById("resultSection");
+  const errorBox = document.getElementById("errorBox");
+
+  const payload = {
+    age: getVal("age"),
+    blood_pressure: getVal("blood_pressure"),
+    specific_gravity: getVal("specific_gravity"),
+    albumin: getVal("albumin"),
+    sugar: getVal("sugar"),
+    red_blood_cells: getVal("red_blood_cells"),
+    pus_cell: getVal("pus_cell"),
+    pus_cell_clumps: getVal("pus_cell_clumps"),
+    bacteria: getVal("bacteria"),
+    blood_glucose_random: getVal("blood_glucose_random"),
+    blood_urea: getVal("blood_urea"),
+    serum_creatinine: getVal("serum_creatinine"),
+    sodium: getVal("sodium"),
+    potassium: getVal("potassium"),
+    haemoglobin: getVal("haemoglobin"),
+    packed_cell_volume: getVal("packed_cell_volume"),
+    white_blood_cell_count: getVal("white_blood_cell_count"),
+    red_blood_cell_count: getVal("red_blood_cell_count"),
+    hypertension: getVal("hypertension"),
+    diabetes_mellitus: getVal("diabetes_mellitus"),
+    coronary_artery_disease: getVal("coronary_artery_disease"),
+    appetite: getVal("appetite"),
+    peda_edema: getVal("peda_edema"),
+    aanemia: getVal("aanemia"),
+  };
+
+  btnContent.innerHTML = `<div class="spinner mx-auto"></div>`;
+  btn.disabled = true;
+  resultSection.classList.add("hidden");
+  errorBox.classList.add("hidden");
+
+  try {
+    const res = await fetch(`${API_BASE}/predict/kidney`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    const probMatch = data.report.match(/([\d.]+)%/);
+    const prob = probMatch ? parseFloat(probMatch[1]) : 0;
+    const isPositive = data.prediction === 1;
+
+    const cardBg = isPositive ? "bg-red-500/5 border-red-500/20" : "bg-primary/5 border-primary/20";
+    const iconBg = isPositive ? "h-20 w-20 bg-red-500/20 rounded-full flex items-center justify-center text-red-400" : "h-20 w-20 bg-primary/20 rounded-full flex items-center justify-center text-primary";
+    const icon = isPositive ? "warning" : "check_circle";
+    const title = isPositive ? "Kidney Disease Detected" : "Kidneys Appear Healthy";
+    const badge = isPositive
+      ? `<span class="bg-red-500/20 text-red-400 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">High Risk</span>`
+      : `<span class="bg-primary text-background-dark text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Low Risk</span>`;
+
+    document.getElementById("resultCard").className = `rounded-2xl p-8 border flex flex-col md:flex-row items-center justify-between gap-8 ${cardBg}`;
+    document.getElementById("resultCard").innerHTML = `
+      <div class="flex items-center gap-6">
+        <div class="${iconBg}">
+          <span class="material-symbols-outlined text-4xl">${icon}</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-2xl font-bold text-slate-100">${title}</h3>
+            ${badge}
+          </div>
+          <p class="text-slate-400">Based on provided clinical vitals and lab values.</p>
+        </div>
+      </div>
+      <div class="text-center md:text-right">
+        <p class="text-slate-500 text-sm font-medium uppercase tracking-widest mb-1">Model Confidence</p>
+        <div class="flex items-end gap-2">
+          <span class="text-5xl font-black text-primary">${prob.toFixed(0)}%</span>
+          <span class="text-primary/60 font-bold mb-1">accuracy</span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("reportText").textContent = data.report.trim();
+
+    // Info cards
+    document.getElementById("infoCards").innerHTML = `
+      <div class="bg-card-dark p-6 rounded-xl border border-slate-700/50">
+        <div class="flex items-center gap-3 text-primary mb-3">
+          <span class="material-symbols-outlined">info</span>
+          <h4 class="font-bold">Recommendation</h4>
+        </div>
+        <p class="text-sm text-slate-400">${isPositive ? "Consult a nephrologist immediately. Monitor BP, creatinine, and blood urea regularly." : "Continue regular monitoring and maintain hydration. Next routine check in 6 months."}</p>
+      </div>
+      <div class="bg-card-dark p-6 rounded-xl border border-slate-700/50">
+        <div class="flex items-center gap-3 text-primary mb-3">
+          <span class="material-symbols-outlined">history</span>
+          <h4 class="font-bold">Risk Level</h4>
+        </div>
+        <p class="text-sm text-slate-400">${isPositive ? "High risk detected. Early intervention is critical to prevent chronic kidney disease progression." : "Low risk. Maintain healthy lifestyle and avoid unnecessary NSAIDs."}</p>
+      </div>
+      <div class="bg-card-dark p-6 rounded-xl border border-slate-700/50">
+        <div class="flex items-center gap-3 text-primary mb-3">
+          <span class="material-symbols-outlined">security</span>
+          <h4 class="font-bold">Data Privacy</h4>
+        </div>
+        <p class="text-sm text-slate-400">All health information is processed securely. This tool is for clinical assistance only.</p>
+      </div>
+    `;
+
+    resultSection.classList.remove("hidden");
+    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  } catch (err) {
+    errorBox.textContent = `❌ Error: ${err.message}. The server might be waking up — try again in 30 seconds.`;
+    errorBox.classList.remove("hidden");
+  } finally {
+    btnContent.innerHTML = `<span class="material-symbols-outlined">analytics</span> Kidney's Test Result`;
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

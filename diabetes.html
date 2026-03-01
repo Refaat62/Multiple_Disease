@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Diabetes AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#ffb805",
+          "background-dark": "#0B1220",
+          "navy-dark": "#0E1628",
+          "input-bg": "#1C2333",
+        },
+        fontFamily: { "display": ["Inter", "sans-serif"] },
+      },
+    },
+  }
+</script>
+<style>
+  body { background: linear-gradient(180deg, #0B1220 0%, #0E1628 100%); min-height: 100vh; }
+  .glass-container { background: rgba(28,35,51,0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255,184,5,0.1); }
+  .spinner { border: 3px solid rgba(255,184,5,0.2); border-top-color: #ffb805; border-radius: 50%; width: 22px; height: 22px; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .result-appear { animation: fadeUp 0.5s ease forwards; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body class="font-display text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+  <div class="layout-container flex h-full grow flex-col">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b border-primary/10 px-6 py-4 lg:px-20">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span class="material-symbols-outlined">health_metrics</span>
+        </div>
+        <h2 class="text-xl font-bold tracking-tight text-white">Medical AI <span class="text-primary">Dashboard</span></h2>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8 lg:px-10">
+
+      <!-- Tab Nav -->
+      <nav class="mb-8 flex border-b border-white/10">
+        <a class="group relative flex items-center gap-2 px-6 py-4 text-sm font-semibold text-slate-400 hover:text-white" href="kidney.html">
+          <span class="material-symbols-outlined text-lg">nephrology</span> Kidney Disease
+        </a>
+        <a class="group relative flex items-center gap-2 px-6 py-4 text-sm font-semibold text-slate-400 hover:text-white" href="heart.html">
+          <span class="material-symbols-outlined text-lg">cardiology</span> Heart Disease
+        </a>
+        <a class="group relative flex items-center gap-2 px-6 py-4 text-sm font-bold text-primary" href="diabetes.html">
+          <span class="material-symbols-outlined text-lg">glucose</span> Diabetes
+          <div class="absolute bottom-0 left-0 h-1 w-full rounded-t-full bg-primary"></div>
+        </a>
+      </nav>
+
+      <!-- Hero -->
+      <div class="mb-10">
+        <div class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary mb-4">
+          <span class="h-2 w-2 rounded-full bg-primary"></span> Advanced Diagnostics
+        </div>
+        <h1 class="text-4xl font-black tracking-tight text-white lg:text-5xl">
+          Diabetes Prediction <span class="text-primary/90">Using Machine Learning</span>
+        </h1>
+        <p class="mt-4 max-w-2xl text-lg text-slate-400">
+          Input clinical patient data below to generate a high-confidence diagnostic risk assessment.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <div class="glass-container rounded-xl p-6 lg:p-10">
+        <h3 class="mb-8 flex items-center gap-2 text-xl font-bold text-white">
+          <span class="material-symbols-outlined text-primary">clinical_notes</span> Patient Clinical Data
+        </h3>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">Number of Pregnancies</label>
+            <input id="Pregnancies" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 2" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">Glucose Level (mg/dL)</label>
+            <input id="Glucose" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 120" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">Blood Pressure Value</label>
+            <input id="BloodPressure" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 80" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">Skin Thickness (mm)</label>
+            <input id="SkinThickness" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 20" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">Insulin Value (mu U/ml)</label>
+            <input id="Insulin" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 85" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">BMI Value</label>
+            <input id="BMI" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 26.6" step="0.1" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2 lg:col-span-2">
+            <label class="text-sm font-semibold text-slate-300">Diabetes Pedigree Function</label>
+            <input id="DiabetesPedigreeFunction" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 0.351" step="0.001" type="number" value="0"/>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-300">Age</label>
+            <input id="Age" class="h-14 w-full rounded-xl border-none bg-input-bg p-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50" placeholder="e.g. 33" type="number" value="0"/>
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="mt-10 flex justify-center">
+          <button id="submitBtn" onclick="predictDiabetes()"
+            class="relative group h-14 w-full max-w-md overflow-hidden rounded-xl bg-primary px-8 font-bold text-background-dark transition-all hover:scale-[1.02]">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"></div>
+            <span id="btnContent" class="relative flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">analytics</span> Run Diabetes Test Result
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Section -->
+      <div id="resultSection" class="mt-12 mb-20 hidden result-appear">
+        <h4 class="mb-4 text-sm font-bold uppercase tracking-widest text-slate-500">Analysis Result</h4>
+        <div id="resultCard" class="glass-container flex flex-col items-center justify-between gap-6 rounded-xl border-l-4 p-8 md:flex-row">
+          <!-- filled by JS -->
+        </div>
+
+        <!-- Report Box -->
+        <div class="mt-6 glass-container rounded-xl p-6">
+          <h4 class="flex items-center gap-2 mb-4 font-bold text-white">
+            <span class="material-symbols-outlined text-primary">description</span> Full Report
+          </h4>
+          <pre id="reportText" class="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed font-mono bg-input-bg rounded-lg p-4"></pre>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="errorBox" class="mt-6 hidden glass-container rounded-xl border-l-4 border-l-red-500 p-5 text-red-400 text-sm"></div>
+
+    </main>
+
+    <footer class="border-t border-white/5 px-6 py-8 text-center text-sm text-slate-600">
+      <p>© 2024 Diabetes AI Diagnostic Tool. For clinical assistance only.</p>
+    </footer>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://models-ml-fastapi-3.onrender.com";
+
+async function predictDiabetes() {
+  const btn = document.getElementById("submitBtn");
+  const btnContent = document.getElementById("btnContent");
+  const resultSection = document.getElementById("resultSection");
+  const errorBox = document.getElementById("errorBox");
+
+  // Get values
+  const payload = {
+    Pregnancies: parseFloat(document.getElementById("Pregnancies").value) || 0,
+    Glucose: parseFloat(document.getElementById("Glucose").value) || 0,
+    BloodPressure: parseFloat(document.getElementById("BloodPressure").value) || 0,
+    SkinThickness: parseFloat(document.getElementById("SkinThickness").value) || 0,
+    Insulin: parseFloat(document.getElementById("Insulin").value) || 0,
+    BMI: parseFloat(document.getElementById("BMI").value) || 0,
+    DiabetesPedigreeFunction: parseFloat(document.getElementById("DiabetesPedigreeFunction").value) || 0,
+    Age: parseFloat(document.getElementById("Age").value) || 0,
+  };
+
+  // Loading state
+  btnContent.innerHTML = `<div class="spinner mx-auto"></div>`;
+  btn.disabled = true;
+  resultSection.classList.add("hidden");
+  errorBox.classList.add("hidden");
+
+  try {
+    const res = await fetch(`${API_BASE}/predict/diabetes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error);
+
+    // Extract probability from report
+    const probMatch = data.report.match(/([\d.]+)%/);
+    const prob = probMatch ? probMatch[1] : "—";
+    const isPositive = data.prediction === 1;
+
+    // Risk level colors
+    const riskColor = isPositive ? "border-l-primary" : "border-l-green-500";
+    const iconColor = isPositive ? "text-primary bg-primary/20" : "text-green-400 bg-green-400/20";
+    const icon = isPositive ? "warning" : "check_circle";
+    const title = isPositive ? "Diabetes Detected" : "No Diabetes Detected";
+    const badge = isPositive
+      ? `<span class="rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">HIGH RISK</span>`
+      : `<span class="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">LOW RISK</span>`;
+
+    document.getElementById("resultCard").className =
+      `glass-container flex flex-col items-center justify-between gap-6 rounded-xl border-l-4 ${riskColor} p-8 md:flex-row`;
+
+    document.getElementById("resultCard").innerHTML = `
+      <div class="flex items-center gap-6">
+        <div class="flex h-20 w-20 items-center justify-center rounded-full ${iconColor}">
+          <span class="material-symbols-outlined text-4xl">${icon}</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl font-black text-white">${title}</span>
+            ${badge}
+          </div>
+          <p class="mt-1 text-slate-400">Based on the provided clinical parameters.</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-center md:items-end">
+        <span class="text-sm font-semibold text-slate-500">Confidence Score</span>
+        <span class="text-5xl font-black text-primary">${prob}<span class="text-2xl">%</span></span>
+      </div>
+    `;
+
+    document.getElementById("reportText").textContent = data.report.trim();
+    resultSection.classList.remove("hidden");
+    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  } catch (err) {
+    errorBox.textContent = `❌ Error: ${err.message}. The server might be waking up (cold start) — try again in 30 seconds.`;
+    errorBox.classList.remove("hidden");
+  } finally {
+    btnContent.innerHTML = `<span class="material-symbols-outlined">analytics</span> Run Diabetes Test Result`;
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
